@@ -78,7 +78,7 @@ out_n = [outn2 outn3; outn4 outn1];
 
 
 outn1 = imresize(image1_gray,[360 410],'bilinear');
-outn2 = imresize(image2_gray,[360 410],'bilinear');
+outn2 = imresize(image2_gray,[360 410],'bilinear'); % We thought was the best method. Made picture clearer and crisper
 outn3 = imresize(image3_gray,[360 410],'bilinear');
 outn4 = imresize(image4_gray,[360 410],'bilinear');
 
@@ -160,7 +160,7 @@ shift3 = fftshift(log(1+abs(imfft3)));
 close all;
 
 up1 = imresize(image1_gray, 2, 'nearest');
-up2 = imresize(image1_gray, 2, 'bilinear');
+up2 = imresize(image1_gray, 2, 'bilinear'); % We thought was the best method. Made picture clearer and crisper
 up3 = imresize(image1_gray, 2, 'bicubic');
 cup1 = edge(up1, 'canny');
 cup2 = edge(up2, 'canny');
