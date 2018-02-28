@@ -38,6 +38,6 @@ figure; imshow(uint8(mag_im3_s)); title('Magnitude of Submarine');
 % Shows results of magnitude using imagesc (different results)
 %figure; imagesc(mag_im1_s); colormap gray; title('Magnitude of Dog');
 %figure; imagesc(mag_im2_s); colormap gray; title('Magnitude of Motorcycle');
-%figure; imagesc(mag_im2_s); colormap gray; title('Magnitude of Submarine');
+%figure; imagesc(mag_im3_s); colormap gray; title('Magnitude of Submarine');
 
 
