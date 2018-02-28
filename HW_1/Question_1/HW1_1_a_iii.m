@@ -3,6 +3,7 @@ clc;
 clear;
 close all;
 
+tic;
 %Import images from HW1 folder and convert to grayscale
 image1 = rgb2gray(imread('dog.bmp'));
 image2 = rgb2gray(imread('motorcycle.bmp'));
@@ -20,11 +21,12 @@ fmag_im1 = abs(f_im1);
 fmag_im2 = abs(f_im2);
 fmag_im3 = abs(f_im3);
 
-
-mag_im1 = ifftshift(ifft2(fmag_im1));
-mag_im2 = ifft2(fftshift(fmag_im2));
-mag_im3 = ifft2(fftshift(fmag_im3));
-
-figure; imagesc(mag_im1); colormap gray; title('Magnitude of Dog');
-figure; imshow(uint8(mag_im2)); title('Magnitude of Motorcycle');
-figure; imshow(uint8(mag_im3)); title('Magnitude of Submarine');
+%This takes the inverse Fourier Transform and then shifts
+mag_im1 = fftshift(ifft2(fmag_im1));
+mag_im2 = fftshift(ifft2(fmag_im2));
+mag_im3 = fftshift(ifft2(fmag_im3));
+toc;
+%Shows results of magnitude of each image
+% figure; imshow(uint8(mag_im1)); title('Magnitude of Dog');
+% figure; imshow(uint8(mag_im2)); title('Magnitude of Motorcycle');
+% figure; imshow(uint8(mag_im3)); title('Magnitude of Submarine');
