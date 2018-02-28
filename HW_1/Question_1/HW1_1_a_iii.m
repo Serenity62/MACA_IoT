@@ -20,19 +20,24 @@ fmag_im1 = abs(f_im1);
 fmag_im2 = abs(f_im2);
 fmag_im3 = abs(f_im3);
 
-% This takes the inverse Fourier Transform
+% This takes the Inverse Fourier Transform
 mag_im1 = ifft2(fmag_im1);
 mag_im2 = ifft2(fmag_im2);
 mag_im3 = ifft2(fmag_im3);
 
-% This Shifts the result
+% This FFT Shifts the result to move origin to center
 mag_im1_s = fftshift(mag_im1);
 mag_im2_s = fftshift(mag_im2);
 mag_im3_s = fftshift(mag_im2);
 
-% Shows results of magnitude of each image
+% Shows results of magnitude of each image using imshow
 figure; imshow(uint8(mag_im1_s)); title('Magnitude of Dog');
 figure; imshow(uint8(mag_im2_s)); title('Magnitude of Motorcycle');
 figure; imshow(uint8(mag_im3_s)); title('Magnitude of Submarine');
+
+% Shows results of magnitude using imagesc (different results)
+%figure; imagesc(mag_im1_s); colormap gray; title('Magnitude of Dog');
+%figure; imagesc(mag_im1_s); colormap gray; title('Magnitude of Motorcycle');
+%figure; imagesc(mag_im1_s); colormap gray; title('Magnitude of Submarine');
 
 
