@@ -9,20 +9,32 @@ close all; % closes all figures
 
 
 %% data formatting
-trainsize = 28709; testsize1 = 3589; testsize2 = 3589; 
+trainsize = 10000; testsize = 5000; maxsize = 15000;
 [numdat, textdat] = xlsread('fer2013.csv');
-testdata = textdat(0:trainsize, 2);
-a = cellfun(@(x)regexp(x,' ','split'),textdat(:,2),'UniformOutput',0);
-im = reshape(textdat(2,2), [48,48]);
+% testdata = textdat(0:trainsize, 2);
 
-% data = readtable('fer2013.csv');
-% [datah, dataw] = size(data);
-% test = table2array(data(:,2:dataw-1));
-% em = table2array(data(:,1:1));
-% a = cellfun(@(S) sscanf(S, '%f,').', em, 'Uniform', 0);
-% em = a(:,1:1);
-% 
-% usage = table2array(data(:,dataw:dataw));
+% a = cellfun(@(x)regexp(x,' ','split'),textdat(:,2),'UniformOutput',0);
+tr = uint8(zeros(trainsize, 48*48+1));
+for i = 2:trainsize + 1
+    s = char(textdat(i,2));
+    c = strsplit(s, ' ');
+    m = uint8(str2double(c));
+    tr(i-1,2:48*48+1) = m;
+end
+sub = uint8(zeros(testsize, 48*48+1));
+for i = 2 : testsize + 1
+    s = char(textdat(i+trainsize,2));
+    c = strsplit(s, ' ');
+    m = uint8(str2double(c));
+    sub(i-1,2:48*48+1) = m;
+end
+% y = numdat(1:trainsize-1,1);
+% x = vertcat(numdat(1:trainsize,1), tr);
+
+tr(:,1) = numdat(1:trainsize,1);
+sub(:,1) = numdat(trainsize+1:maxsize,1);
+
+% im = reshape(textdat(2,2), [48,48]);
 
 
 % The first column is the label that shows the correct digit for each sample in the dataset,
@@ -38,7 +50,7 @@ figure    ;                                      % plot images
 colormap(gray)                                  % set to grayscale
 for i = 1:25                                    % preview first 25 samples
     subplot(5,5,i)                              % plot them in 6 x 6 grid
-    digit = reshape(tr(i, 2:end), [48,48])';    % row = 28 x 28 image
+    digit = reshape(tr(i, :), [48,48])';    % row = 28 x 28 image
     imagesc(digit)                              % show the image
     title(num2str(tr(i, 1)))                    % show the label
 end
