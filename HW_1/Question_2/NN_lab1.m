@@ -9,7 +9,7 @@ close all; % closes all figures
 
 
 %% data formatting
-trainsize = 10000; testsize = 5000; maxsize = 15000;
+trainsize = 15000; testsize = 5000; maxsize = 15000;
 [numdat, textdat] = xlsread('fer2013.csv');
 % testdata = textdat(0:trainsize, 2);
 
@@ -50,7 +50,7 @@ figure    ;                                      % plot images
 colormap(gray)                                  % set to grayscale
 for i = 1:25                                    % preview first 25 samples
     subplot(5,5,i)                              % plot them in 6 x 6 grid
-    digit = reshape(tr(i, :), [48,48])';    % row = 28 x 28 image
+    digit = reshape(tr(i, 2:end), [48,48])';    % row = 28 x 28 image
     imagesc(digit)                              % show the image
     title(num2str(tr(i, 1)))                    % show the label
 end
@@ -68,8 +68,8 @@ end
 % for model evaluation, and you will only use 2/3 for training our artificial neural network model.
 
 n = size(tr, 1);                    % number of samples in the dataset
-targets  = tr(:,1);                 % 1st column is |label|
-targets(targets == 0) = 10;         % use '10' to present '0'
+targets  = double(tr(:,1));                 % 1st column is |label|
+targets(targets == 0) = 7;         % use '10' to present '0'
 targetsd = dummyvar(targets);       % convert label into a dummy variable
 inputs = tr(:,2:end);               % the rest of columns are predictors
 
@@ -79,15 +79,16 @@ targetsd = targetsd';               % transpose dummy variable
 
 %% partitioning the dataset based on random selection of indices
 rng(1);                             % for reproducibility
-c = cvpartition(n,'Holdout',n/3);   % hold out 1/3 of the dataset
+c = cvpartition(n,'Holdout',uint8(n/3));   % hold out 1/3 of the dataset
 
 Xtrain = inputs(:, training(c));    % 2/3 of the input for training
 Ytrain = targetsd(:, training(c));  % 2/3 of the target for training
 Xtest = inputs(:, test(c));         % 1/3 of the input for testing
 Ytest = targets(test(c));           % 1/3 of the target for testing
 Ytestd = targetsd(:, test(c));      % 1/3 of the dummy variable for testing
-
-
+Xtrain = double(Xtrain);
+Xtest = double(Xtest);
+Ytest = double(Ytest);
 
 % Visualizing the Learned Weights
 % If you look inside myNNfun.m, you see variables like IW1_1 and x1_step1_keep 
@@ -132,7 +133,7 @@ sum(Ytest == Ypred) / length(Ytest) % compare the predicted vs. actual
 % Let's do this programmatically this time. myNNscript.m will be handy for this
 % - you can simply adapt the script to do a parameter sweep.
 
-sweep = [10,50:50:300];                 % parameter values to test
+sweep = [500,600:100:1200];                 % parameter values to test
 scores = zeros(length(sweep), 1);       % pre-allocation
 models = cell(length(sweep), 1);        % pre-allocation
 x = Xtrain;                             % inputs
