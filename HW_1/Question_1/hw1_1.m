@@ -1,29 +1,39 @@
 close all;
 clear all;
 clc;
+% Read images   
+Im1 = imread('fish.bmp');
+Im2 = imread('motorcycle.bmp');
 
-%convert images to grayscale
-image = rgb2gray(imread('fish.bmp'));
-image2 = rgb2gray(imread('motorcycle.bmp'));
+%Convert to grayscale
+Im1 = rgb2gray(Im1);
+Im2 = rgb2gray(Im2);
 
-%get images' magnitude and phase
-[Gmag, Gdir] = imgradient(image);
-[Gmag2, Gdir2] = imgradient(image2);
+% get size of images
+[r1, c1] = size(Im1);
+[r2, c2] = size(Im2);
 
-%get sizes of images
-[im2mh, im2mw] = size(Gmag2);
-[im2ph, im2pw] = size(Gdir2);
+rows = max(r1, r2);
+cols = max(c1, c2);
 
-%resize image for use
-Gmag = imresize(Gmag, [im2ph, im2pw]);
+% FFT
+Im1_FFT=fft2(Im1, rows, cols);
+Im2_FFT=fft2(Im2, rows, cols);
 
-%combine fish magnitude and motorcycle phase
-imagefinal = Gmag + Gdir2;
-figure;imshow(imagefinal);
+% get magnitudes and phase
+mag1 = abs(Im1_FFT);
+mag2 = abs(Im2_FFT);
+pha1 = angle(Im1_FFT);
+pha2 = angle(Im2_FFT);
 
-%resize image for use
-Gdir = imresize(Gdir, [im2mh, im2mw]);
+% combine images
+out1 = mag1 .* exp(1i*pha2);
+out2 = mag2 .* exp(1i*pha1);
 
-%combine motorcycle magnitude and fish phase
-imagefinal = Gdir + Gmag2;
-figure;imshow(imagefinal);
+% inverse
+out1 = real(ifft2(out1));
+out2 = real(ifft2(out2));
+
+% show images
+figure;imshow(out1, []);
+figure;imshow(out2, []);
