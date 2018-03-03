@@ -9,11 +9,11 @@ close all; % closes all figures
 
 
 %% data formatting
-trainsize = 15000; testsize = 5000; maxsize = 15000;
+trainsize = 15000;
+tic;
 [numdat, textdat] = xlsread('fer2013.csv');
-% testdata = textdat(0:trainsize, 2);
-
-% a = cellfun(@(x)regexp(x,' ','split'),textdat(:,2),'UniformOutput',0);
+toc;
+tic;
 tr = uint8(zeros(trainsize, 48*48+1));
 for i = 2:trainsize + 1
     s = char(textdat(i,2));
@@ -21,20 +21,8 @@ for i = 2:trainsize + 1
     m = uint8(str2double(c));
     tr(i-1,2:48*48+1) = m;
 end
-sub = uint8(zeros(testsize, 48*48+1));
-for i = 2 : testsize + 1
-    s = char(textdat(i+trainsize,2));
-    c = strsplit(s, ' ');
-    m = uint8(str2double(c));
-    sub(i-1,2:48*48+1) = m;
-end
-% y = numdat(1:trainsize-1,1);
-% x = vertcat(numdat(1:trainsize,1), tr);
-
 tr(:,1) = numdat(1:trainsize,1);
-sub(:,1) = numdat(trainsize+1:maxsize,1);
-
-% im = reshape(textdat(2,2), [48,48]);
+toc;
 
 
 % The first column is the label that shows the correct digit for each sample in the dataset,
@@ -115,10 +103,10 @@ Ytest = double(Ytest);
 % for each possible label. You simply choose the most probable label as your prediction 
 %     and then compare it to the actual label. You should see 95% categorization accuracy.
 
-Ypred = myNNfun(Xtest);             % predicts probability for each label
-Ypred(:, 1:5)                       % display the first 5 columns
-[~, Ypred] = max(Ypred);            % find the indices of max probabilities
-sum(Ytest == Ypred) / length(Ytest) % compare the predicted vs. actual
+% Ypred = myNNfun(Xtest);             % predicts probability for each label
+% Ypred(:, 1:5)                       % display the first 5 columns
+% [~, Ypred] = max(Ypred);            % find the indices of max probabilities
+% sum(Ytest == Ypred) / length(Ytest) % compare the predicted vs. actual
 
 
 % You probably noticed that the artificial neural network model generated from 
@@ -133,7 +121,7 @@ sum(Ytest == Ypred) / length(Ytest) % compare the predicted vs. actual
 % Let's do this programmatically this time. myNNscript.m will be handy for this
 % - you can simply adapt the script to do a parameter sweep.
 
-sweep = [500,600:100:1200];                 % parameter values to test
+sweep = [300,350:50:2300];                 % parameter values to test
 scores = zeros(length(sweep), 1);       % pre-allocation
 models = cell(length(sweep), 1);        % pre-allocation
 x = Xtrain;                             % inputs
@@ -142,9 +130,9 @@ trainFcn = 'trainscg';                  % scaled conjugate gradient
 for i = 1:length(sweep)
     hiddenLayerSize = sweep(i);         % number of hidden layer neurons
     net = patternnet(hiddenLayerSize);  % pattern recognition network
-    net.divideParam.trainRatio = 70/100;% 70% of data for training
-    net.divideParam.valRatio = 15/100;  % 15% of data for validation
-    net.divideParam.testRatio = 15/100; % 15% of data for testing
+    net.divideParam.trainRatio = 50/100;% 70% of data for training
+    net.divideParam.valRatio = 5/100;  % 15% of data for validation
+    net.divideParam.testRatio = 45/100; % 15% of data for testing
     net = train(net, x, t);             % train the network
     models{i} = net;                    % store the trained network
     p = net(Xtest);                     % predictions
