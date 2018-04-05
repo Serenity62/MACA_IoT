@@ -65,7 +65,7 @@ save('BiorData.mat','tr');
 load('BiorData.mat');
 load('emotion.mat');
 sizes=[1000;800;];
-%for k=1:2
+for k=1:2
     n = size(emotion, 1);                    % number of samples in the dataset
     targets  = emotion(:,1);                 % 1st column is |label|
     targets(targets == 0) = 7;         % use '7' to present '0'
@@ -132,4 +132,4 @@ sizes=[1000;800;];
         clear Coif2Data;
         sizes=[1000;800;];
     end
-%end
+end
