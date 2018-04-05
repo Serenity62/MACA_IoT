@@ -56,22 +56,23 @@ for i = 1:row                                    % preview first 25 samples
     tr(i,2:33*33+1) = V;    
 end
 
-save('Bior3.9Data.mat','tr');
+save('BiorData.mat','tr');
 %%
 
 %% The dataset stores samples in rows rather than in columns, so you need to
 % transpose it. Then you will partition the data so that you hold out 1/3 of the data
 % for model evaluation, and you will only use 2/3 for training our artificial neural network model.
-load('HaarData.mat');
-sizes=[550;800;];
-for k=1:2
-    n = size(tr, 1);                    % number of samples in the dataset
-    targets  = tr(:,1);                 % 1st column is |label|
+load('BiorData.mat');
+load('emotion.mat');
+sizes=[1000;800;];
+%for k=1:2
+    n = size(emotion, 1);                    % number of samples in the dataset
+    targets  = emotion(:,1);                 % 1st column is |label|
     targets(targets == 0) = 7;         % use '7' to present '0'
     targetsd = dummyvar(targets);       % convert label into a dummy variable
 
     % No need for the first column in the (tr) set any longer
-    inputs = tr(:,2:end);               % the rest of columns are predictors
+    inputs = tr(:,:);               % the rest of columns are predictors
 
     inputs = inputs';                   % transpose input
     targets = targets';                 % transpose target
@@ -88,18 +89,19 @@ for k=1:2
     Ytest = targets(test(patitionObject));           % 1/3 of the target for testing
     Ytestd = targetsd(:, test(patitionObject));      % 1/3 of the dummy variable for testing
 
-    %% Sweeo Code Block
-    %% Sweeping to choose different sizes for the hidden layer
+    %% Sweep Code Block
+    %Sweeping to choose different sizes for the hidden layer
 
-    sweep = [10,50:100:sizes(k)];                 % parameter values to test
-    scores = zeros(length(sweep), 1);       % pre-allocation
+    sweep = [10,50:50:sizes(k)];                 % parameter values to test
+    scores = zeros(length(sweep), length(sweep));       % pre-allocation
     % we will use models to save the several neural network result from this
     % sweep and run loop
-    models = cell(length(sweep), 1);        % pre-allocation
+    models = cell(length(sweep), length(sweep));        % pre-allocation
     x = Xtrain;                             % inputs
     t = Ytrain;                             % targets
     trainFcn = 'trainscg';                  % scaled conjugate gradient
     for i = 1:length(sweep)
+        
         hiddenLayerSize = sweep(i);         % number of hidden layer neurons
         net = patternnet(hiddenLayerSize);  % pattern recognition network
         net.divideParam.trainRatio = 70/100;% 70% of data for training
@@ -110,22 +112,24 @@ for k=1:2
         p = net(Xtest);                     % predictions
         [~, p] = max(p);                    % predicted labels
         scores(i) = sum(Ytest == p) /length(Ytest);  % categorization accuracy
-
+        
     end
     % Let's now plot how the categorization accuracy changes versus number of 
     % neurons in the hidden layer.
     if k==1
-        figure('Name', 'Haar')
+        figure('Name', 'Bior3.9')
     else
         figure('Name', 'Coif2')
     end
-    plot(sweep, scores, '.-')
+    plot(sweep, scores)
     xlabel('number of hidden neurons')
     ylabel('categorization accuracy')
     title('Number of hidden neurons vs. accuracy')
     if k==1
         clear;
         load('Coif2Data.mat');
-        sizes=[550;800;];
+        load('emotion.mat');
+        clear Coif2Data;
+        sizes=[1000;800;];
     end
-end
+%end
