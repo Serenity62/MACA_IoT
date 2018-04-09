@@ -10,7 +10,7 @@
 frameFilter = filter2(fspecial('average',2),frame)/255;
 
 % Gaussian Mixture Model for clustering image
-%frameGMM = INSERT CODE HERE
+frameGMM = gmdistribution(frameFilter, 'full');
 
 % Use Canny Edge Detection Algorithm to generate binary file with edges
 frameCannyEdge = edge(frameGMM,'Canny');
