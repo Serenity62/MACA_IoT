@@ -7,7 +7,7 @@
 % INSERT CODE HERE
 
 % Non-linear Filter for Noise Reduction
-%frameFilter = INSERT CODE HERE
+frameFilter = filter2(fspecial('average',2),frame)/255;
 
 % Gaussian Mixture Model for clustering image
 %frameGMM = INSERT CODE HERE
