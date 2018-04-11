@@ -1,6 +1,6 @@
 % Author(s): Aaron Barraclough, Michael Ferry, Steven Roote, Corey Zalewski
 
-detector = vision.ForegroundDetector('NumTrainingFrames', 200, 'AdaptLearningRate', 'false');
+detector = vision.ForegroundDetector('NumTrainingFrames', 200);
 videoPlayer = vision.VideoPlayer('Position',[100,100,680,520]);
 cam = webcam(3);
 
@@ -13,7 +13,7 @@ for i = 1 : 200
     pause(0.005);
 end
 %% Preprocessing (Image Processing and Feature Extraction)
-while ~isDone(videoPlayer)
+while true
 
     % Recieve New Frame From Webcam
     im = snapshot(cam);
