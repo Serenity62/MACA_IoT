@@ -1,20 +1,23 @@
-
+clc;
+close all
+clear;
 
 %% Import Training data
-% load('train.mat');
-for i = 1 : 1400
-    frame = reshape(csv(i,:), [960, 1280]);
-    fr = imresize(frame, [480,640]);
-    tr(i, :) = reshape(fr, [1,480*640]);
-end
+load('traindat.mat');
+% for i = 1 : 1400
+%     frame = reshape(csv(i,:), [960, 1280]);
+%     fr = imresize(frame, [480,640]);
+%     tr(i, :) = reshape(fr, [1,480*640]);
+% end
+
 %% Setup NN
-n = size(tr, 1);                    % number of samples in the dataset
+n = size(train, 1);                    % number of samples in the dataset
 targets  = label; 
-targets(targets == 0) = 10;         % use '7' to present '0'
+targets(targets == 0) = 3;         % use '7' to present '0'
 targetsd = dummyvar(targets);       % convert label into a dummy variable
 
 % No need for the first column in the (tr) set any longer
-inputs = tr;               % the rest of columns are predictors
+inputs = train;               % the rest of columns are predictors
 
 inputs = inputs';                   % transpose input
 targets = targets';                 % transpose target
@@ -31,10 +34,11 @@ Xtest = inputs(:, test(patitionObject));         % 1/3 of the input for testing
 Ytest = targets(test(patitionObject));           % 1/3 of the target for testing
 Ytestd = targetsd(:, test(patitionObject));      % 1/3 of the dummy variable for testing
 
+clear train;
 %% Sweep Code Block
 %Sweeping to choose different sizes for the hidden layer
 
-sweep = [10,50:50:1000];                 % parameter values to test
+sweep = [100,200:100:12200];                 % parameter values to test
 scores = zeros(length(sweep), length(sweep));       % pre-allocation
 % we will use models to save the several neural network result from this
 % sweep and run loop
@@ -53,7 +57,7 @@ for i = 1:length(sweep)
     models{i} = net;                    % store the trained network
     p = net(Xtest);                     % predictions
     [~, p] = max(p);                    % predicted labels
-    scores(i) = sum(Ytest == p) /length(Ytest);  % categorization accuracy
+    scores(i) = sum(Ytest' == p) /length(Ytest);  % categorization accuracy
 
 end
 % Let's now plot how the categorization accuracy changes versus number of 
