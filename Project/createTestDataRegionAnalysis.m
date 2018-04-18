@@ -26,10 +26,10 @@ end
 
 %% Open Image
 
-%se = strel('disk',1);
-%maskOpened = imopen(mask, se);
+se = strel('disk',2);
+maskOpened = imopen(mask, se);
 
-%maskL = logical(maskOpened);
+maskL = logical(maskOpened);
 %figure;
 %imshow(maskL);
 
@@ -40,14 +40,28 @@ maskLogical = logical(mask);
 %figure;
 %imshow(maskLogical);
 
-stats = regionprops(maskLogical, 'Area', 'PixelIdxList', 'BoundingBox');
+stats = regionprops(maskL, 'Area', 'PixelIdxList', 'BoundingBox');
 
 %% Find Largest Region by Area
-[maxValue, Index] = max([stats.Area]);
+
+[maxArea, Index] = max([stats.Area]);
 
 
 %% Find Minumum Box to Enclose Area
 
+bounds = stats(Index).BoundingBox;
+
 %% Crop Area
 
+maskCropped = imcrop(maskLogical, bounds);
+
+figure;
+imshow(maskCropped);
+
 %% Canny Edge Detector
+
+maskCanny = edge(maskCropped, 'Canny');
+
+figure;
+imshow(maskCanny);
+
