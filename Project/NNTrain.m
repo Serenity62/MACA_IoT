@@ -53,9 +53,9 @@ for i = 1:length(sweep)
     net.divideParam.trainRatio = 70/100;% 70% of data for training
     net.divideParam.valRatio = 15/100;  % 15% of data for validation
     net.divideParam.testRatio = 15/100; % 15% of data for testing
-    net = train(net, x, t);             % train the network
+    net = train(net, x, t,'useGPU','yes');             % train the network
     models{i} = net;                    % store the trained network
-    p = net(Xtest);                     % predictions
+    p = net(Xtest,'useGPU','yes');                     % predictions
     [~, p] = max(p);                    % predicted labels
     scores(i) = sum(Ytest' == p) /length(Ytest);  % categorization accuracy
 
