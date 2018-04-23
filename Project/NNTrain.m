@@ -17,7 +17,7 @@ targets(targets == 0) = 3;         % use '7' to present '0'
 targetsd = dummyvar(targets);       % convert label into a dummy variable
 
 % No need for the first column in the (tr) set any longer
-inputs = train;               % the rest of columns are predictors
+inputs = ims;               % the rest of columns are predictors
 
 inputs = inputs';                   % transpose input
 targets = targets';                 % transpose target
@@ -38,7 +38,7 @@ clear ims;
 %% Sweep Code Block
 %Sweeping to choose different sizes for the hidden layer
 
-sweep = [100,200:100:12200];                 % parameter values to test
+sweep = [1000,2000:1000:56000];                 % parameter values to test
 scores = zeros(length(sweep), length(sweep));       % pre-allocation
 % we will use models to save the several neural network result from this
 % sweep and run loop
