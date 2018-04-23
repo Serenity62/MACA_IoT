@@ -11,7 +11,7 @@ load('traindat.mat');
 % end
 
 %% Setup NN
-n = size(train, 1);                    % number of samples in the dataset
+n = size(ims, 1);                    % number of samples in the dataset
 targets  = label; 
 targets(targets == 0) = 3;         % use '7' to present '0'
 targetsd = dummyvar(targets);       % convert label into a dummy variable
@@ -34,7 +34,7 @@ Xtest = inputs(:, test(patitionObject));         % 1/3 of the input for testing
 Ytest = targets(test(patitionObject));           % 1/3 of the target for testing
 Ytestd = targetsd(:, test(patitionObject));      % 1/3 of the dummy variable for testing
 
-clear train;
+clear ims;
 %% Sweep Code Block
 %Sweeping to choose different sizes for the hidden layer
 
