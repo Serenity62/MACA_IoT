@@ -43,7 +43,7 @@ function maskCanny = preprocess(im)
     % Crop Area
     maskCropped = imcrop(maskL, bounds);
     % Resize
-    maskCroppedResized = imresize(maskCropped, 0.25);
+    maskCroppedResized = imresize(maskCropped, 0.5);
     % Canny Edge Detector
     maskCanny = edge(maskCroppedResized, 'Canny');
 end
