@@ -11,14 +11,9 @@ while true
     im = snapshot(cam);
     frame = rgb2gray(im);
     
-    % Use skin segmentation code
+    % preprocessing
+    frameCannyEdge=preprocess(frame);
     
-    
-    % Region analysis
-    
-    
-    % Use Canny Edge Detection Algorithm to generate binary file with edges
-    frameCannyEdge = edge(frameGMM,'Canny');
 %     figure;
 %     imshow(frameCannyEdge);
     
@@ -31,8 +26,7 @@ while true
     
     % Feed prediction to API caller
     API_caller(p);
-    
-    
+      
     % Show final
     step(videoPlayer,frameCannyEdge);
 end
