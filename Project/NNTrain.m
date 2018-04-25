@@ -4,11 +4,8 @@ clear;
 
 %% Import Training data
 load('traindat.mat');
-% for i = 1 : 1400
-%     frame = reshape(csv(i,:), [960, 1280]);
-%     fr = imresize(frame, [480,640]);
-%     tr(i, :) = reshape(fr, [1,480*640]);
-% end
+ims = sumCol; %check sumRow later
+clear sumCol;
 
 %% Setup NN
 n = size(ims, 1);                    % number of samples in the dataset
@@ -17,7 +14,7 @@ targets(targets == 0) = 3;         % use '7' to present '0'
 targetsd = dummyvar(targets);       % convert label into a dummy variable
 
 % No need for the first column in the (tr) set any longer
-inputs = ims;               % the rest of columns are predictors
+inputs = double(ims);               % the rest of columns are predictors
 
 inputs = inputs';                   % transpose input
 targets = targets';                 % transpose target
@@ -38,25 +35,30 @@ clear ims;
 %% Sweep Code Block
 %Sweeping to choose different sizes for the hidden layer
 
-sweep = [1000,2000:1000:56000];                 % parameter values to test
+sweep = [1,10:10:239];                 % parameter values to test
 scores = zeros(length(sweep), length(sweep));       % pre-allocation
 % we will use models to save the several neural network result from this
 % sweep and run loop
 models = cell(length(sweep), length(sweep));        % pre-allocation
-x = Xtrain;                             % inputs
-t = Ytrain;                             % targets
+x = nndata2gpu(Xtrain);                             % inputs
+t = nndata2gpu(Ytrain);                             % targets
 trainFcn = 'trainscg';                  % scaled conjugate gradient
 for i = 1:length(sweep)
 
     hiddenLayerSize = sweep(i);         % number of hidden layer neurons
     net = patternnet(hiddenLayerSize);  % pattern recognition network
+    net.trainFcn;
     net.divideParam.trainRatio = 70/100;% 70% of data for training
     net.divideParam.valRatio = 15/100;  % 15% of data for validation
     net.divideParam.testRatio = 15/100; % 15% of data for testing
-    net = train(net, x, t,'useGPU','yes');             % train the network
-    models{i} = net;                    % store the trained network
-    p = net(Xtest,'useGPU','yes');                     % predictions
-    [~, p] = max(p);                    % predicted labels
+    net.inputs{1}.processFcns = {};
+%     net.outputs{1}.processFcns = {'mapminmax'};
+    n2 = configure(net, Xtrain, Ytrain);
+%     n2.output.processFcns = {'mapminmax'};
+    n2 = train(n2, x, t,'useGPU','yes');             % train the network
+    models{i} = n2;                    % store the trained network
+    p = n2(nndata2gpu(Xtest),'useGPU','yes');                     % predictions
+    [~, p] = max(gpu2nndata(p));                    % predicted labels
     scores(i) = sum(Ytest' == p) /length(Ytest);  % categorization accuracy
 
 end
@@ -67,3 +69,8 @@ plot(sweep, scores)
 xlabel('number of hidden neurons')
 ylabel('categorization accuracy')
 title('Number of hidden neurons vs. accuracy')
+
+
+[best, ind] = max(scores(:,1));
+bestNN = models{ind};
+save('nn.mat','bestNN');
