@@ -3,7 +3,7 @@
 mypi = raspi('192.168.110.2','pi','raspberry');
 videoPlayer = vision.VideoPlayer('Position',[100,100,680,520]);
 cam = webcam(mypi);
-load('NN.mat');
+load('nn.mat'); %bestNN is the name for the nn
 %% Preprocessing (Image Processing and Feature Extraction)
 while true
 
