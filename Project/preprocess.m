@@ -7,8 +7,9 @@ function a = preprocess(im)
     H = 228;
     % Apply Skin Segmentation Algorithm (Loop with pixel RGBm conditions)
     mask = im(:,:,1);
-    for i = 1 : 960
-        for j = 1 : 1280
+    sz = size(im);
+    for i = 1 : sz(1)
+        for j = 1 : sz(2)
             % Get pixel
             r = im(i,j,1);
             g = im(i,j,2);
