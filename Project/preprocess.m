@@ -1,14 +1,14 @@
 function a = preprocess(im)
 
     % This will preprocess an image 'im' for use for training NN
-    % Input = Image 'im'
+    % Input = Image 'im' SIZE: 480x640
     
-    W = 247;
-    H = 228;
+    W = 124;
+    H = 114;
     % Apply Skin Segmentation Algorithm (Loop with pixel RGBm conditions)
     mask = im(:,:,1);
-    for i = 1 : 960
-        for j = 1 : 1280
+    for i = 1 : 480
+        for j = 1 : 640
             % Get pixel
             r = im(i,j,1);
             g = im(i,j,2);
@@ -43,9 +43,9 @@ function a = preprocess(im)
     % Crop Area
     maskCropped = imcrop(maskL, bounds);
     % Resize
-    maskCroppedResized = imresize(maskCropped, 0.5);
+    %maskCroppedResized = imresize(maskCropped, 0.5);
     % Canny Edge Detector
-    maskCanny = edge(maskCroppedResized, 'Canny');
+    maskCanny = edge(maskCropped, 'Canny');
     % Static Analysis
     sum_col = sum(maskCanny);
     sum_row = sum(maskCanny,2);
