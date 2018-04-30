@@ -2,30 +2,31 @@
 clc;
 clear;
 close all;
+
 %% Setup
+disp('Connecting to Raspberry Pi');
 mypi = raspi('192.168.110.154','pi','raspberry');
-% videoPlayer = vision.VideoPlayer('Position',[100,100,680,520]);
+disp('Creating Camera Object');
 cam = webcam(mypi,char(mypi.AvailableWebcams(1)), '640x480');
-% cam.Resolution = '640x480'; /dev/video0 or HD Webcam C615 (usb-3f980000.usb-1.3):
-load('nn.mat'); %bestNN is the name for the nn
-im = snapshot(cam);
+hueIp = '192.168.110.111';
+disp('Creating connection to Hue Bridge');
+hueProfile = setupHue(hueIp);
+load('nn.mat'); % bestNN is the name for the nn
+im = snapshot(cam); % first snapshot is always black
 prv = 0;
 
 %% Preprocessing (Image Processing and Feature Extraction)
+disp('Executing...');
 while true
 
     % Recieve New Frame From Webcam
     im = snapshot(cam);
-    %frame = rgb2gray(im);
     
-    % preprocessing
-    frameCannyEdge=preprocess(im);
-    
-%     figure;
-%     imshow(frameCannyEdge);
+    % Preprocessing
+    frameCannyEdge = preprocess(im);
     
     % Canny Edge into feature vector
-    sz = size(frameCannyEdge); %size of CannyEdge frame
+    sz = size(frameCannyEdge);
     fv = reshape(frameCannyEdge,[1,sz(1)*sz(2)]); 
     
     % Feed feature vector to NN
@@ -39,17 +40,13 @@ while true
     end
     p = bestNN(fv); %prediction of NN(1-10)
     [~, p] = max(p);
-%     p = gpu2nndata(p);
     
     % Feed prediction to API caller
-    if prv ~= p
+    if prv ~= p     % Don't call if value hasn't changed.
         prv = p;
-        API_caller(p);
+        API_caller(p, hueIp, hueProfile);
     end
-    disp(p);
-    pause(.5);
-    % Show final
-%     step(videoPlayer,frameCannyEdge);
+    %disp(p);   % Uncomment if you want to see the predication from NN
+    pause(.5);      % Small pause between capture
 end
-% release(videoPlayer);
 clear cam;

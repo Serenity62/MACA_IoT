@@ -1,8 +1,7 @@
-function b = API_caller(n) %if we have no output then 'b =' can be removed
-   api = 'http://192.168.110.137/api/lCyG8gixtkQEJnoWNHVsANECVEKWmLUjW7R9Jllj/lights/1/state'; %base url
+functionAPI_caller(n, ip, profile)
+   api = strcat('http://',ip,'/api/',profile,'/lights/1/state'); %base url
     
     options = weboptions('MediaType','application/json','RequestMethod','put');
-%     api = strcat(api, '/gesture');
    if n == 1 
        %on
        data = true; %turns light on

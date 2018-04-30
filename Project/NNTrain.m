@@ -57,6 +57,7 @@ for i = 1:length(sweep)
 %     n2.output.processFcns = {'mapminmax'};
     n2 = train(n2, x, t,'useGPU','yes');             % train the network
     models{i} = n2;                    % store the trained network
+    nnData = nndata2gpu(Xtest);
     p = n2(nndata2gpu(Xtest),'useGPU','yes');                     % predictions
     [~, p] = max(gpu2nndata(p));                    % predicted labels
     scores(i) = sum(Ytest' == p) /length(Ytest);  % categorization accuracy
